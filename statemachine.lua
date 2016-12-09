@@ -1,6 +1,8 @@
 local machine = {}
 machine.__index = machine
 
+local unpack = unpack or table.unpack
+
 local NONE = "none"
 local ASYNC = "async"
 
@@ -46,7 +48,7 @@ local function create_transition(name)
       if enterReturn ~= ASYNC then
         transition(self, ...)
       end
-      
+
       return true
     elseif self.asyncState == name .. "WaitingOnEnter" then
       call_handler(self["onafter" .. name] or self["on" .. name], params)
@@ -55,11 +57,11 @@ local function create_transition(name)
       self.currentTransitioningEvent = nil
       return true
     else
-    	if string.find(self.asyncState, "WaitingOnLeave") or string.find(self.asyncState, "WaitingOnEnter") then
-    		self.asyncState = NONE
-    		transition(self, ...)
-    		return true
-    	end
+        if string.find(self.asyncState, "WaitingOnLeave") or string.find(self.asyncState, "WaitingOnEnter") then
+            self.asyncState = NONE
+            transition(self, ...)
+            return true
+        end
     end
 
     self.currentTransitioningEvent = nil
@@ -96,7 +98,7 @@ function machine.create(options)
     fsm.events[name] = fsm.events[name] or { map = {} }
     add_to_map(fsm.events[name].map, event)
   end
-  
+
   for name, callback in pairs(options.callbacks or {}) do
     fsm[name] = callback
   end
